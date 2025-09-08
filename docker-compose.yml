@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Service Backend (NestJS)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: todo_backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=3306
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=tododb
+      - JWT_SECRET=7[:l9@8F_48+,2B}V7lmb0GwYQgMU.7kl # Pense à mettre ton propre secret ici
+
+  # Service Frontend (React)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: todo_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  # Service Base de données (MySQL)
+  db:
+    image: mysql:8.0
+    container_name: todo_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: tododb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+# Volume pour la persistance des données de la base de données
+volumes:
+  mysql_data:
