@@ -1,7 +1,6 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # Service Backend (NestJS)
   backend:
     build:
       context: ./backend
@@ -12,6 +11,10 @@ services:
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
+    # CORRECTION ICI: On force le conteneur à démarrer en mode développement.
+    # Ce mode n'a pas besoin du dossier /dist et rechargera le code
+    # automatiquement quand tu modifieras un fichier !
+    command: npm run start:dev
     depends_on:
       - db
     environment:
@@ -20,23 +23,22 @@ services:
       - DATABASE_USER=user
       - DATABASE_PASSWORD=password
       - DATABASE_NAME=tododb
-      - JWT_SECRET=7[:l9@8F_48+,2B}V7lmb0GwYQgMU.7kl # Pense à mettre ton propre secret ici
+      - JWT_SECRET=7[:l9@8F_48+,2B}V7lmb0GwYQgMU.7kl
 
-  # Service Frontend (React)
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: todo_frontend
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
+  # Service Frontend (React) - Temporairement désactivé
+  #frontend:
+  #  build:
+  #    context: ./frontend
+  #    dockerfile: Dockerfile
+  #  container_name: todo_frontend
+  #  ports:
+  #    - "5173:5173"
+  #  volumes:
+  #    - ./frontend:/app
+  #    - /app/node_modules
+  #  depends_on:
+  #    - backend
 
-  # Service Base de données (MySQL)
   db:
     image: mysql:8.0
     container_name: todo_db
@@ -47,10 +49,9 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 
-# Volume pour la persistance des données de la base de données
 volumes:
   mysql_data:
