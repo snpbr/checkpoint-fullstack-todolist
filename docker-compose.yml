@@ -29,18 +29,20 @@ services:
       # - JWT_SECRET=TA_CLE_SECRETE_ULTRA_COMPLIQUEE_ET_TRES_LONGUE
       - JWT_SECRET=7[:l9@8F_48+,2B}V7lmb0GwYQgMU.7kl
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: todo_frontend
-  #   ports:
-  #     - '5173:5173'
-  #   volumes:
-  #     - ./frontend:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - backend
+  frontend:
+    build:
+      # On pointe vers le nouveau dossier 'todolist'
+      context: ./frontend/todolist
+      dockerfile: Dockerfile
+    container_name: todo_frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      # On pointe vers le nouveau dossier 'todolist'
+      - ./frontend/todolist:/app
+      - /app/node_modules
+    depends_on:
+      - backend
 
   db:
     image: mysql:8.0
