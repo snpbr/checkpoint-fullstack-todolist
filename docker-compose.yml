@@ -1,4 +1,6 @@
-version: "3.8"
+# JWT_SECRET=7[:l9@8F_48+,2B}V7lmb0GwYQgMU.7kl
+
+version: '3.8'
 
 services:
   backend:
@@ -7,13 +9,14 @@ services:
       dockerfile: Dockerfile
     container_name: todo_backend
     ports:
-      - "3000:3000"
+      - '3000:3000'
+    # La correction la plus importante est ici.
+    # On dit à Docker de synchroniser le code, mais de BIEN garder
+    # le node_modules qui a été créé pendant le build.
     volumes:
       - ./backend:/usr/src/app
       - /usr/src/app/node_modules
-    # CORRECTION ICI: On force le conteneur à démarrer en mode développement.
-    # Ce mode n'a pas besoin du dossier /dist et rechargera le code
-    # automatiquement quand tu modifieras un fichier !
+    # On passe en mode développement pour le hot-reload
     command: npm run start:dev
     depends_on:
       - db
@@ -23,21 +26,21 @@ services:
       - DATABASE_USER=user
       - DATABASE_PASSWORD=password
       - DATABASE_NAME=tododb
+      # - JWT_SECRET=TA_CLE_SECRETE_ULTRA_COMPLIQUEE_ET_TRES_LONGUE
       - JWT_SECRET=7[:l9@8F_48+,2B}V7lmb0GwYQgMU.7kl
 
-  # Service Frontend (React) - Temporairement désactivé
-  #frontend:
-  #  build:
-  #    context: ./frontend
-  #    dockerfile: Dockerfile
-  #  container_name: todo_frontend
-  #  ports:
-  #    - "5173:5173"
-  #  volumes:
-  #    - ./frontend:/app
-  #    - /app/node_modules
-  #  depends_on:
-  #    - backend
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: todo_frontend
+  #   ports:
+  #     - '5173:5173'
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - backend
 
   db:
     image: mysql:8.0
@@ -49,7 +52,7 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: rootpassword
     ports:
-      - "3307:3306"
+      - '3307:3306'
     volumes:
       - mysql_data:/var/lib/mysql
 
